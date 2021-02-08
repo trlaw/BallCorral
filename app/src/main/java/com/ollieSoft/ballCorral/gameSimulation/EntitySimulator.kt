@@ -8,20 +8,9 @@ import com.ollieSoft.ballCorral.utility.Vector
 
 class EntitySimulator() {
 
-    private var entityFactoryManager: EntityFactoryManager? = null
-    private val playerBarrierList: MutableList<BarrierEntity> = mutableListOf<BarrierEntity>()
-    private val scoreTextEntity = ScoreEntity()
-    private val bestScoreTextEntity = BestScoreEntity()
-    private lateinit var collisionGrid: CollisionGrid
-    private val entityList = mutableListOf<GameEntity>()
+    private lateinit var gameState: GameState
     var entitySimulationState = EntitySimulationState.NONE
-    private var gameBoundary: GameBoundary? = null
-    private var entitiesToRemove = mutableSetOf<GameEntity>()
     private var restartFlag: Boolean = false
-    var simTime = 0.0
-
-
-    //Game Simulation Lifecycle Methods
 
     fun endGame() {
         entitySimulationState = EntitySimulationState.ENDED
@@ -29,20 +18,13 @@ class EntitySimulator() {
 
     fun initialize(screenDims: Vector? = null, resObj: Resources) {
         entitySimulationState = EntitySimulationState.NONE
-
-        if (!trySetupGameBoundary(screenDims)) {
+        if (!validScreenDimensions(screenDims)) {
             return
         }
-
-        entityFactoryManager = EntityFactoryManager(resObj)
-
-        resetEntityLists()
-        setupScoringEntities()
-        initCollisionGrid()
-        addGameEndingBarriers()
-
+        gameState = GameState(resObj,GameBoundary(screenDims!!))
         entitySimulationState = EntitySimulationState.INITIALIZED
     }
+
 
     private fun restartIfRequested() {
         if (restartFlag) {
@@ -165,38 +147,10 @@ class EntitySimulator() {
         }
     }
 
-    //Accessors
-
-    //Initialization Methods
-
-
-    private fun resetEntityLists() {
-        entityList.clear()
-        playerBarrierList.clear()
+     private fun validScreenDimensions(screenDims: Vector?): Boolean {
+        return (screenDims != null) && (screenDims.x != 0.0) && (screenDims.y != 0.0)
     }
 
-    private fun setupScoringEntities() {
-        addEntity(lostBallsTextEntity)
-        addEntity(scoreTextEntity)
-        addEntity(bestScoreTextEntity)
-        lostBallsTextEntity.lostBallCount = 0
-        simTime = 0.0
-    }
-
-    private fun trySetupGameBoundary(boundaryDims: Vector? = null): Boolean {
-        if ((gameBoundary == null) || (!(gameBoundary!!.isValidGameBoundary()))) {
-            if (boundaryDims != null) {
-                gameBoundary = GameBoundary(boundaryDims)
-            } else {
-                return false
-            }
-            if (gameBoundary!!.isValidGameBoundary()) {
-                return true
-            }
-            return false
-        }
-        return true
-    }
 }
 
 enum class EntitySimulationState {
