@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Iterations of impulse constraint correction on each call to the Constraint Solver -->
+    <integer name="CONSTRAINT_ITERATIONS">2</integer>
+
+    <!-- Stiffness constant for Ball-Ball overlap-->
+    <string name="BALL_BALL_BETA">0.5</string>
+
+    <!-- Stiffness constant for Ball-Barrier overlap-->
+    <string name="BALL_BARRIER_BETA">0.5</string>
+
+    <!--Interaction stiffness not applied unless overlap exceeds this fraction of radius -->
+    <string name="BALL_BALL_SLOP_FACTOR">0.02</string>
+
+    <!--Interaction stiffness not applied unless overlap exceeds this fraction of ball radius -->
+    <string name="BALL_BARRIER_SLOP_FACTOR">0.02</string>
+
+    <!--Constraints which have been continuously satisfied for this amount of simulation time will
+        be purged from the constraint cache -->
+    <string name="IDLE_CONSTRAINT_LIFETIME">20.0</string>
+
+</resources>

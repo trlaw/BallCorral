@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="screenEdgeOffset">0dp</dimen>
     <integer name="defaultStrokeWidth">5</integer>
+
+    <!-- Thickness of outline on circles in pixels -->
+    <string name="CIRCLE_OUTLINE_WIDTH">3.0</string>
+
+    <string name="SCORE_TEXT_X">240.0</string>
+    <string name="SCORE_TEXT_Y">60.0</string>
+
+    <string name="BEST_SCORE_TEXT_X">480.0</string>
+    <string name="BEST_SCORE_TEXT_Y">60.0</string>
+
 </resources>

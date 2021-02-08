@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Minimum time between frame updates in ms -->
+    <string name="FRAME_INTERVAL_MS">17</string>
+
+    <!-- Simulation time to advance per frame (dimensionless) -->
+    <string name="FRAME_SIMULATION_TIME">1.0</string>
+
+</resources>

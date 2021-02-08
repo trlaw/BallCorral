@@ -8,10 +8,10 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.example.android.ballCorral"
+        applicationId "com.ollieSoft.ballCorral"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 3
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player barriers will only be registered when a touch pointer has moved this many pixels -->
+    <string name="MIN_PLAYER_LINE_LENGTH">20.0</string>
+</resources>

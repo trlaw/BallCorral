@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.ballCorral">
+    package="com.ollieSoft.ballCorral">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OllieBallBounce">
         <activity
-            android:name="com.example.android.ballCorral.MainActivity"
+            android:name="com.ollieSoft.ballCorral.MainActivity"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

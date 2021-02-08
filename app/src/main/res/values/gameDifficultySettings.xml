@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Simulation time between attempts to add a Ball -->
+    <string name="BALL_ADD_TIME">100.0</string>
+
+    <!-- Maximum number of Balls allowed in play at one time -->
+    <integer name="BALL_LIMIT">50</integer>
+
+    <!-- Maximum length of barrier allowed in pixels -->
+    <string name="MAX_BARRIER_LENGTH">1500.0</string>
+
+    <!-- Maximum number of balls that may be lost before game ends -->
+    <integer name="MAX_LOST_BALLS">50</integer>
+
+</resources>
