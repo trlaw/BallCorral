@@ -8,8 +8,8 @@ import com.ollieSoft.ballCorral.utility.Vector
 
 class EntitySimulator() {
 
-    private lateinit var gameState: GameState
     var entitySimulationState = EntitySimulationState.NONE
+    private lateinit var gameState: GameState
     private var restartFlag: Boolean = false
 
     fun endGame() {
@@ -18,18 +18,16 @@ class EntitySimulator() {
 
     fun initialize(screenDims: Vector? = null, resObj: Resources) {
         entitySimulationState = EntitySimulationState.NONE
-        if (!validScreenDimensions(screenDims)) {
-            return
+        if (validScreenDimensions(screenDims)) {
+            gameState = GameState(resObj, GameBoundary(screenDims!!))
+            entitySimulationState = EntitySimulationState.INITIALIZED
         }
-        gameState = GameState(resObj,GameBoundary(screenDims!!))
-        entitySimulationState = EntitySimulationState.INITIALIZED
     }
-
 
     private fun restartIfRequested() {
         if (restartFlag) {
             restartFlag = false
-            initialize()
+            gameState.reset()
         }
     }
 
@@ -102,53 +100,16 @@ class EntitySimulator() {
     //Entity Adders
     fun addPlayerBarrier(barrier: Pair<Vector, Vector>) {
         if (entitySimulationState == EntitySimulationState.RUNNING) {
-            tryAddBarrier(barrier)
+            gameState.tryAddBarrier(barrier)
         }
     }
 
-    private fun tryAddBarrier(barrier: Pair<Vector, Vector>) {
-        val newBarrier = playerBarrierFactory.create().apply {
-            start = barrier.first
-            end = barrier.second
-        }
-        //Disallow barriers in contact with ball
-        if (entityList.none { gameEntity ->
-                ((gameEntity is BallEntity) && (gameEntity.collided(newBarrier)))
-            }) {
-            addEntity(newBarrier)
-            playerBarrierList.add(newBarrier)
-            if (playerBarrierList.size > MAX_BARRIERS) {
-                markForRemoval(playerBarrierList.removeAt(0))
-            }
-        }
-    }
-
-    private fun tryAddBall() {
-
-        //Add ball only if enough time elapsed
-        if (simTime < (getScore() * R.string.BALL_ADD_TIME.toDouble())) {
-            return
-        }
-
-        //Don't add if already at maximum allowed ball count
-        if ((entityList.count { it -> it is BallEntity }) >= R.integer.BALL_LIMIT) {
-            return
-        }
-
-        val newBall = gameBallFactory.create()
-        gameBoundary!!.setSpawnState(newBall)
-
-        //Add ball only if it will not collide with an existing entity
-        if (entityList.none { gameEntity ->
-                ((gameEntity is CollidableEntity) && (gameEntity.collided(newBall)))
-            }) {
-            addEntity(newBall)
-            incrementScore()
-        }
-    }
-
-     private fun validScreenDimensions(screenDims: Vector?): Boolean {
+    private fun validScreenDimensions(screenDims: Vector?): Boolean {
         return (screenDims != null) && (screenDims.x != 0.0) && (screenDims.y != 0.0)
+    }
+
+    fun getPaintableObjects(): PaintableShapeList? {
+        return gameState.getPaintableObjects()
     }
 
 }

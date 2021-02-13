@@ -19,6 +19,13 @@ open class Rectangle(val lowerBounds: Vector, val upperBounds: Vector) {
         return ((this.width() > 0.0) && (this.height() > 0.0))
     }
 
+    fun randomPositionInside(): Vector {
+        return Vector(
+            randDoubleInRange(lowerBounds.x, upperBounds.x),
+            randDoubleInRange(lowerBounds.y, upperBounds.y)
+        )
+    }
+
     companion object {
         fun zero(): Rectangle {
             return Rectangle(Vector.zero(), Vector.zero())

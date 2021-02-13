@@ -1,5 +1,7 @@
 package com.ollieSoft.ballCorral.gameSimulation.constraintSolver
 
+import com.ollieSoft.ballCorral.gameSimulation.GameState
+
 abstract class AbstractConstraint(private val inactiveTimeout: Double) {
 
     //Should accumulate as steps processed
@@ -38,5 +40,5 @@ abstract class AbstractConstraint(private val inactiveTimeout: Double) {
     abstract fun applyCorrectiveImpulses()
 
     //Signals the start of time step for constraints which depend on initial quantities
-    abstract fun resetInitialQuantities()
+    abstract fun resetInitialQuantities(gameState: GameState)
 }

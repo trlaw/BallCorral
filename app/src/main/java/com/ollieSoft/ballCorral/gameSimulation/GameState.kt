@@ -1,19 +1,21 @@
 package com.ollieSoft.ballCorral.gameSimulation
 
 import android.content.res.Resources
+import com.ollieSoft.ballCorral.gameSimulation.gameEntities.BallEntity
 import com.ollieSoft.ballCorral.gameSimulation.gameEntities.BestScoreEntity
 import com.ollieSoft.ballCorral.gameSimulation.gameEntities.PaintableEntity
 import com.ollieSoft.ballCorral.gameSimulation.gameEntities.ScoreEntity
 import com.ollieSoft.ballCorral.paintableShapes.PaintableShapeList
+import com.ollieSoft.ballCorral.utility.Vector
 
-class GameState(resObj: Resources, private val gameBoundary: GameBoundary) {
+class GameState(resObj: Resources, val gameBoundary: GameBoundary) {
 
     private val bestScoreEntity = BestScoreEntity()
     val collisionGrid = CollisionGrid(gameBoundary)
     val entityFactoryManager = EntityFactoryManager(resObj)
     val gameEntityList = GameEntityList()
     var gameTime = 0.0
-    val playerBarrierList = PlayerBarrierList()
+    private val playerBarrierList = PlayerBarrierList()
     private val scoreEntity = ScoreEntity()
 
     init {
@@ -37,9 +39,32 @@ class GameState(resObj: Resources, private val gameBoundary: GameBoundary) {
         outputList.shapesLowerRight = gameBoundary.upperBounds
         gameEntityList.forEach { gameEntity ->
             if (gameEntity is PaintableEntity) {
-                outputList.items.add(gameEntity.getPaintableShape())
+                outputList.add(gameEntity.getPaintableShape(this))
             }
         }
         return outputList
     }
+
+    //Restart game
+    fun reset() {
+        bestScoreEntity.bestScore = 0
+        collisionGrid.clearGrid()
+        entityFactoryManager.reset()
+        gameEntityList.clear()
+        gameTime = 0.0
+        playerBarrierList.reset()
+        scoreEntity.score = 0
+    }
+
+    fun tryAddBarrier(barrierEnds: Pair<Vector, Vector>) {
+        val newBarrier =
+            entityFactoryManager.playerBarrierFactory.create(barrierEnds.first, barrierEnds.second)
+        if (gameEntityList.none { gameEntity ->
+                ((gameEntity is BallEntity) && (gameEntity.collided(newBarrier)))
+            }) {
+            gameEntityList.addEntity(newBarrier)
+            playerBarrierList.add(newBarrier,this)
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import com.ollieSoft.ballCorral.gameSimulation.GameState
 
 abstract class CollidableEntity: GameEntity() {
 
+    abstract fun collided(other:CollidableEntity): Boolean
     abstract fun markCollisionGrid(collisionGrid: CollisionGrid): Unit
     abstract fun unMarkCollisionGrid(collisionGrid: CollisionGrid)
 

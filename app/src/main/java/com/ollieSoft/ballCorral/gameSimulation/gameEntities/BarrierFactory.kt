@@ -1,7 +1,7 @@
 package com.ollieSoft.ballCorral.gameSimulation.gameEntities
 
-import com.ollieSoft.ballCorral.gameSimulation.BarrierEntity
+import com.ollieSoft.ballCorral.utility.Vector
 
 abstract class BarrierFactory {
-    abstract fun create(): BarrierEntity
+    abstract fun create(start:Vector, end: Vector): BarrierEntity
 }

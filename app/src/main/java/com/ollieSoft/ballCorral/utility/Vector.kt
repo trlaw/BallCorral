@@ -25,6 +25,10 @@ class Vector(val x: Double, val y: Double) {
         return this.plus(other.times(-1.0))
     }
 
+    fun moduloEach(other: Vector): Vector {
+        return Vector(this.x.rem(other.x),this.y.rem(other.y))
+    }
+
     fun plus(other: Vector): Vector {
         return Vector(this.x + other.x, this.y + other.y)
     }

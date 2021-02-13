@@ -2,9 +2,13 @@ package com.ollieSoft.ballCorral.gameSimulation.gameEntities
 
 import com.ollieSoft.ballCorral.R
 import com.ollieSoft.ballCorral.gameSimulation.CollisionGrid
+import com.ollieSoft.ballCorral.gameSimulation.GameBoundary
+import com.ollieSoft.ballCorral.gameSimulation.GameState
 import com.ollieSoft.ballCorral.paintableShapes.PaintableCircle
+import com.ollieSoft.ballCorral.paintableShapes.PaintableCircleList
 import com.ollieSoft.ballCorral.paintableShapes.PaintableShape
 import com.ollieSoft.ballCorral.utility.Vector
+import com.ollieSoft.ballCorral.utility.inClosedRectangle
 
 class BallEntity() : CollidableEntity(), PaintableEntity, MobileEntity {
 
@@ -15,10 +19,38 @@ class BallEntity() : CollidableEntity(), PaintableEntity, MobileEntity {
     private val maxSpeed = R.string.MAX_BALL_SPEED.toDouble()
     var position = Vector.zero()
     var radius: Double = R.string.BALL_RADIUS.toDouble()
+    var vectorOffset = Vector(this.radius, this.radius)
     var velocity = Vector.zero()
 
-    override fun getPaintableShape(): PaintableShape {
-        return PaintableCircle(position, radius, colorIndex)
+    override fun getPaintableShape(gameState: GameState): PaintableShape {
+        return if (inClosedRectangle(
+                Vector.zero(), gameState.gameBoundary.upperBounds.minus(vectorOffset), position
+            )
+        ) {
+            PaintableCircle(position, radius, colorIndex)
+        } else {
+            getPaintableWrappedCircle(gameState)
+        }
+    }
+
+    private fun getPaintableWrappedCircle(gameState: GameState): PaintableCircleList {
+        val outList = PaintableCircleList()
+        val viewableLower = vectorOffset.times(-1.0)
+        val viewableUpper = gameState.gameBoundary.upperBounds.plus(vectorOffset)
+        for (i in -1..1) {
+            for (j in -1..1) {
+                if ((i != 0) || (j != 0)) {
+                    val wrapPosition = Vector(
+                        position.x + i * gameState.gameBoundary.width(),
+                        position.y + j * gameState.gameBoundary.height()
+                    )
+                    if (inClosedRectangle(viewableLower, viewableUpper, wrapPosition)) {
+                        outList.add(PaintableCircle(wrapPosition, radius, colorIndex))
+                    }
+                }
+            }
+        }
+        return outList
     }
 
     override fun getPotentialColliders(collisionGrid: CollisionGrid): List<CollidableEntity> {
@@ -45,11 +77,15 @@ class BallEntity() : CollidableEntity(), PaintableEntity, MobileEntity {
         collisionGridCell = cell
     }
 
-    override fun travel(dt: Double): Unit {
+    override fun travel(dt: Double, gameBoundary: GameBoundary) {
         if (velocity.mag() > maxSpeed) {
             velocity = velocity.times(maxSpeed / velocity.mag())
         }
-        position = position.plus(velocity.times(dt))
+
+        //Wrap-around if reach end of game boundary
+        position = position.plus(velocity.times(dt)).plus(gameBoundary.upperBounds)
+            .moduloEach(gameBoundary.upperBounds)
+
     }
 
     override fun unMarkCollisionGrid(collisionGrid: CollisionGrid) {

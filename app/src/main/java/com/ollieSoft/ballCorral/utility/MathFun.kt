@@ -17,6 +17,15 @@ fun rotateSensorToDisplayCoords(rotConstant: Int, inputVector: Vector): Vector? 
     }
 }
 
+fun inClosedInterval(lowerBound: Double, upperBound: Double, testValue: Double): Boolean {
+    return ((testValue >= lowerBound) && (testValue <= upperBound))
+}
+
+fun inClosedRectangle(lowerBounds: Vector, upperBounds: Vector, testPosition: Vector): Boolean {
+    return (inClosedInterval(lowerBounds.x, upperBounds.x, testPosition.x)
+            && inClosedInterval(lowerBounds.y, upperBounds.y, testPosition.y))
+}
+
 fun invokeAllPairs(collectionSize: Int, funToInvoke: (Int, Int) -> Unit) {
     for (i in 0 until collectionSize) {
         for (j in 0 until i) {
@@ -28,11 +37,11 @@ fun invokeAllPairs(collectionSize: Int, funToInvoke: (Int, Int) -> Unit) {
 fun invokeAllOrderedPairs(indexOneSize: Int, indexTwoSize: Int, funToInvoke: (Int, Int) -> Unit) {
     for (i in 0 until indexOneSize) {
         for (j in 0 until indexTwoSize) {
-            funToInvoke(i,j)
+            funToInvoke(i, j)
         }
     }
 }
 
-fun vectorMidpoint(v1:Vector,v2:Vector): Vector {
-    return Vector((v1.x+v2.x)/(2f),(v1.y+v2.y)/(2f))
+fun vectorMidpoint(v1: Vector, v2: Vector): Vector {
+    return Vector((v1.x + v2.x) / (2f), (v1.y + v2.y) / (2f))
 }

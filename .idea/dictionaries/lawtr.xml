@@ -4,18 +4,25 @@
       <w>accel</w>
       <w>adot</w>
       <w>anormal</w>
+      <w>ashadow</w>
+      <w>cdot</w>
+      <w>cedge</w>
       <w>coeff</w>
       <w>collidable</w>
       <w>colliders</w>
+      <w>coord</w>
       <w>coords</w>
       <w>databinding</w>
       <w>disp</w>
       <w>grav</w>
       <w>jacobian</w>
+      <w>jcbn</w>
+      <w>lmda</w>
       <w>nosensor</w>
       <w>paintable</w>
       <w>rgby</w>
       <w>rslt</w>
+      <w>spawner</w>
       <w>vmax</w>
       <w>vmin</w>
     </words>

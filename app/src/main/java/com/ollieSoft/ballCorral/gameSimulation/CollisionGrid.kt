@@ -15,9 +15,9 @@ import kotlin.math.floor
 //they will need to registered in the grid inside every cell over which they extend
 class CollisionGrid(private val boundary: GameBoundary) {
 
-    private val minCellSize = 2.0*R.string.BALL_RADIUS.toDouble()*R.string.GRID_SIZE.toDouble()
-    private var numWidthCells: Int = 0
-    private var numHeightCells: Int = 0
+    private val minCellSize = 2.0 * R.string.BALL_RADIUS.toDouble() * R.string.GRID_SIZE.toDouble()
+    var numWidthCells: Int = 0
+    var numHeightCells: Int = 0
     private var cellWidth: Double = 0.0
     private var cellHeight: Double = 0.0
 
@@ -47,6 +47,10 @@ class CollisionGrid(private val boundary: GameBoundary) {
                 && (abs(cellOne.second - cellTwo.second) == 1)
     }
 
+    fun clearGrid() {
+        gridMap.clear()
+    }
+
     fun markGridCell(key: Pair<Int, Int>, item: CollidableEntity): Unit {
         if ((item != null) && (item !in gridMap[key]!!)) {
             gridMap[key]?.add(item)
@@ -54,41 +58,35 @@ class CollisionGrid(private val boundary: GameBoundary) {
     }
 
     fun getKeyForPosition(position: Vector): Pair<Int, Int> {
-        var xKey = floor((position.x-boundary.lowerBounds.x) / cellWidth).toInt()
-        var yKey = ((position.y-boundary.lowerBounds.y) / cellHeight).toInt()
-        if (xKey == numWidthCells) {xKey--}
+        var xKey = floor((position.x - boundary.lowerBounds.x) / cellWidth).toInt()
+        var yKey = ((position.y - boundary.lowerBounds.y) / cellHeight).toInt()
+        if (xKey == numWidthCells) {
+            xKey--
+        }
         if (xKey < 0) xKey = 0
-        if (yKey == numHeightCells) {yKey--}
+        if (yKey == numHeightCells) {
+            yKey--
+        }
         if (yKey < 0) yKey = 0
         return Pair(xKey, yKey)
     }
 
     fun getCollisionKeys(baseKey: Pair<Int, Int>): List<Pair<Int, Int>> {
         val outList = mutableListOf<Pair<Int, Int>>()
-        outList.add(baseKey)
-        if (baseKey.first > 0) {
-            if (baseKey.second > 0) {
-                outList.add(Pair(baseKey.first - 1, baseKey.second - 1))
-            }
-            outList.add(Pair(baseKey.first - 1, baseKey.second))
-            if (baseKey.second < (numHeightCells - 1)) {
-                outList.add(Pair(baseKey.first - 1, baseKey.second + 1))
-            }
-        }
-        if (baseKey.second > 0) {
-            outList.add(Pair(baseKey.first, baseKey.second - 1))
-        }
-        if (baseKey.second < (numHeightCells - 1)) {
-            outList.add(Pair(baseKey.first, baseKey.second + 1))
-        }
-        if (baseKey.first < (numWidthCells - 1)) {
-            if (baseKey.second > 0) {
-                outList.add(Pair(baseKey.first + 1, baseKey.second - 1))
-            }
-            outList.add(Pair(baseKey.first + 1, baseKey.second))
-            if (baseKey.second < (numHeightCells - 1)) {
-                outList.add(Pair(baseKey.first + 1, baseKey.second + 1))
-            }
+        val columns =
+            mutableListOf<Int>(
+                if (baseKey.first > 0) baseKey.first - 1 else numWidthCells - 1,
+                baseKey.first,
+                if (baseKey.first == (numWidthCells - 1)) 0 else baseKey.first + 1
+            )
+        val rows =
+            mutableListOf<Int>(
+                if (baseKey.second > 0) baseKey.second - 1 else numHeightCells - 1,
+                baseKey.second,
+                if (baseKey.second == (numHeightCells - 1)) 0 else baseKey.second + 1
+            )
+        invokeAllOrderedPairs(3,3) { i,j ->
+            outList.add(Pair(rows[i],columns[j]))
         }
         return outList.toList()
     }

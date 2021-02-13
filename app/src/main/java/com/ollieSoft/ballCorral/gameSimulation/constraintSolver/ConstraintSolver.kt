@@ -1,11 +1,12 @@
 package com.ollieSoft.ballCorral.gameSimulation.constraintSolver
 
 import com.ollieSoft.ballCorral.R
-import com.ollieSoft.ballCorral.gameSimulation.BarrierEntity
 import com.ollieSoft.ballCorral.gameSimulation.CollisionGrid
+import com.ollieSoft.ballCorral.gameSimulation.GameEntityList
+import com.ollieSoft.ballCorral.gameSimulation.GameState
 import com.ollieSoft.ballCorral.gameSimulation.gameEntities.BallEntity
+import com.ollieSoft.ballCorral.gameSimulation.gameEntities.BarrierEntity
 import com.ollieSoft.ballCorral.gameSimulation.gameEntities.CollidableEntity
-import com.ollieSoft.ballCorral.gameSimulation.gameEntities.GameEntity
 
 const val ITERATIONS_PER_CALL = 2
 const val IDLE_CONSTRAINT_LIFETIME = 20.0
@@ -17,10 +18,14 @@ class ConstraintSolver {
     private val constraintCache =
         HashMap<Pair<CollidableEntity, CollidableEntity>, AbstractConstraint>()
 
-    fun updateVelocities(collisionGrid: CollisionGrid, gameEntities: List<GameEntity>, dt: Double) {
+    fun updateVelocities(collisionGrid: CollisionGrid, gameState: GameState, dt: Double) {
 
-        addRequiredConstraints(collisionGrid, gameEntities)
-        constraintCache.onEach { it.value.resetInitialQuantities() }
+        addRequiredConstraints(collisionGrid, gameState.gameEntityList)
+
+        //Critical operation.  Anything that needs to be updated in a constraint if entity
+        //positions have changed should be done here.
+        constraintCache.onEach { it.value.resetInitialQuantities(gameState) }
+
         repeat(iterationsPerCall) {
             var constraintsToApply = mutableListOf<AbstractConstraint>()
             constraintCache.onEach {
@@ -48,7 +53,7 @@ class ConstraintSolver {
     }
 
     private fun addRequiredConstraints(
-        collisionGrid: CollisionGrid, gameEntities: List<GameEntity>
+        collisionGrid: CollisionGrid, gameEntities: GameEntityList
     ) {
         gameEntities.forEach { gameEntity ->
             if (gameEntity is BallEntity) {

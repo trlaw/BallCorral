@@ -6,6 +6,8 @@ open class GameEntityList: Iterable<GameEntity> {
     private val backingList = mutableSetOf<GameEntity>()
     private val removalBuffer = mutableSetOf<GameEntity>()
 
+    private val aList = mutableListOf<GameEntity>()
+
     val size: Int
     get() {
         return backingList.size
