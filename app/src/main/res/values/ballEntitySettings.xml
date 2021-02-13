@@ -7,11 +7,4 @@
 
     <string name="DEFAULT_COR">0.5</string>
 
-    <string name="BALL_INIT_V_MIN">3.0</string>
-
-    <string name="BALL_INIT_V_MAX">6.0</string>
-
-    <!-- Balls will spawn with centers at least this many radii from boundaries -->
-    <string name="BALL_SPAWN_OFFSET">2.0</string>
-
 </resources>

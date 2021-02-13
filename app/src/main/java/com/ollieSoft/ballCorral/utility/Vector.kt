@@ -6,6 +6,12 @@ import kotlin.random.Random.Default.nextDouble
 class Vector(val x: Double, val y: Double) {
     var magCache: Double? = null
 
+    val angle: Double by lazy { atan2(this.y,this.x)}
+
+    fun cross(other: Vector): Double {
+        return this.x*other.y-this.y*other.x
+    }
+
     fun dot(other: Vector): Double {
         return this.x * other.x + this.y * other.y
     }

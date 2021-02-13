@@ -46,7 +46,7 @@ class ShapePainter(resObj: Resources) : CanvasPainter() {
     override fun paintViewCanvas(canvas: Canvas, view: CanvasDrawView) {
         canvas.drawColor(BACKGROUND_COLOR)
         if (paintableShapeList != null) {
-            for (paintableShape: PaintableShape in paintableShapeList!!.items) {
+            for (paintableShape: PaintableShape in paintableShapeList!!) {
                 paintableShape.paintShape(canvas,getShapePaintFactory(paintableShape))
             }
         }

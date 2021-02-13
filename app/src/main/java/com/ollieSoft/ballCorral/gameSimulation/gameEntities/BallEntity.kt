@@ -5,7 +5,7 @@ import com.ollieSoft.ballCorral.gameSimulation.CollisionGrid
 import com.ollieSoft.ballCorral.gameSimulation.GameBoundary
 import com.ollieSoft.ballCorral.gameSimulation.GameState
 import com.ollieSoft.ballCorral.paintableShapes.PaintableCircle
-import com.ollieSoft.ballCorral.paintableShapes.PaintableCircleList
+import com.ollieSoft.ballCorral.paintableShapes.PaintableCircleSet
 import com.ollieSoft.ballCorral.paintableShapes.PaintableShape
 import com.ollieSoft.ballCorral.utility.Vector
 import com.ollieSoft.ballCorral.utility.inClosedRectangle
@@ -33,8 +33,8 @@ class BallEntity() : CollidableEntity(), PaintableEntity, MobileEntity {
         }
     }
 
-    private fun getPaintableWrappedCircle(gameState: GameState): PaintableCircleList {
-        val outList = PaintableCircleList()
+    private fun getPaintableWrappedCircle(gameState: GameState): PaintableCircleSet {
+        val outList = PaintableCircleSet()
         val viewableLower = vectorOffset.times(-1.0)
         val viewableUpper = gameState.gameBoundary.upperBounds.plus(vectorOffset)
         for (i in -1..1) {
@@ -69,6 +69,26 @@ class BallEntity() : CollidableEntity(), PaintableEntity, MobileEntity {
                 }
             }
         return potentialColliders
+    }
+
+    override fun collided(other: CollidableEntity): Boolean {
+        if (other is BallEntity)  {
+            if (((!this.dead) && (!other.dead)) && (this.position.minus(other.position)
+                    .mag() < (this.radius + other.radius))
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun handleCollision(other: CollidableEntity, gameState: GameState) {
+        if  (((!this.dead) && (!other.dead)) && (other is BallEntity)) {
+            gameState.score = gameState.score + (if (this.colorIndex == other.colorIndex) 1 else -2)
+            PairedBallEntity(this, other).addSelfToGameState(gameState)
+            this.markSelfForRemoval(gameState)
+            other.markSelfForRemoval(gameState)
+        }
     }
 
     override fun markCollisionGrid(collisionGrid: CollisionGrid) {

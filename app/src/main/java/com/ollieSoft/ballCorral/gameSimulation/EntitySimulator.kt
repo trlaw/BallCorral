@@ -1,8 +1,10 @@
 package com.ollieSoft.ballCorral.gameSimulation
 
 import android.content.res.Resources
-import com.ollieSoft.ballCorral.R
-import com.ollieSoft.ballCorral.gameSimulation.gameEntities.*
+import com.ollieSoft.ballCorral.gameSimulation.constraintSolver.ConstraintSolver
+import com.ollieSoft.ballCorral.gameSimulation.gameEntities.BallEntity
+import com.ollieSoft.ballCorral.gameSimulation.gameEntities.CollidableEntity
+import com.ollieSoft.ballCorral.gameSimulation.gameEntities.MobileEntity
 import com.ollieSoft.ballCorral.paintableShapes.PaintableShapeList
 import com.ollieSoft.ballCorral.utility.Vector
 
@@ -10,6 +12,7 @@ class EntitySimulator() {
 
     var entitySimulationState = EntitySimulationState.NONE
     private lateinit var gameState: GameState
+    private var constraintSolver = ConstraintSolver()
     private var restartFlag: Boolean = false
 
     fun endGame() {
@@ -40,59 +43,69 @@ class EntitySimulator() {
         if (entitySimulationState == EntitySimulationState.RUNNING) {
 
             //Add ball to game if spawn conditions satisfied
-            tryAddBall()
+            BallSpawner.tryAddBall(gameState)
 
             //Advance mobile object positions
             updateMobileEntityPositions(dt)
 
             //Populate collision grid with mobile objects
-            markCollisionGridWithMobileEntities()
+            markCollisionGridWithMobileEntities(gameState)
 
             //Adjust mobile objects according to collisions
             processMobileEntityCollisions()
 
+            //Remove any entities destroyed in collision events
+            gameState.gameEntityList.removeMarkedEntities()
+
+            //Update velocities with constraint solver
+            constraintSolver.updateVelocities(gameState,dt)
+
             //Remove mobile entities from collision grid since position may change on next step
-            unMarkMobileEntitiesFromGrid()
+            unMarkMobileEntitiesFromGrid(gameState)
 
-            removeMarkedEntities() //Remove entity list items marked for removal
-
-            simTime += dt
+            gameState.gameTime += dt
         }
         restartIfRequested()
     }
 
 
     //State Update Helper Methods
-    private fun markCollisionGridWithMobileEntities() {
+    private fun markCollisionGridWithMobileEntities(gameState: GameState) {
+        val refList = gameState.gameEntityList
+        val refGrid = gameState.collisionGrid
         var i = 0
-        while (i < entityList.size) {
-            if ((entityList[i] is CollidableEntity) && (entityList[i] is MobileEntity)) {
-                (entityList[i] as CollidableEntity).markCollisionGrid(collisionGrid)
+        while (i < refList.size) {
+            if ((refList[i] is CollidableEntity) && (refList[i] is MobileEntity)) {
+                (refList[i] as CollidableEntity).markCollisionGrid(refGrid)
             }
             i++
         }
     }
 
     private fun processMobileEntityCollisions() {
-        entityList.forEach { it ->
-            if (it is MobileEntity) {
-                it.reactToCollisions(collisionGrid)
+        gameState.gameEntityList.forEach { it ->
+            if (it is BallEntity) {
+                it.getPotentialColliders(gameState.collisionGrid).forEach { other ->
+                    if (it.collided(other)) {
+                        it.handleCollision(other,gameState)
+                    }
+                }
             }
         }
     }
 
-    private fun unMarkMobileEntitiesFromGrid() {
-        for (gameEntity in entityList) {
+    private fun unMarkMobileEntitiesFromGrid(gameState: GameState) {
+        for (gameEntity in gameState.gameEntityList) {
             if ((gameEntity is CollidableEntity) && (gameEntity is MobileEntity)) {
-                gameEntity.unMarkCollisionGrid(collisionGrid)
+                gameEntity.unMarkCollisionGrid(gameState.collisionGrid)
             }
         }
     }
 
     private fun updateMobileEntityPositions(dt: Double) {
-        entityList.forEach { it ->
+        gameState.gameEntityList.forEach { it ->
             if (it is MobileEntity) {
-                it.travel(dt)
+                it.travel(dt,gameState.gameBoundary)
             }
         }
     }

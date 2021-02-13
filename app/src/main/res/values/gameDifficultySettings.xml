@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Simulation time between attempts to add a Ball -->
-    <string name="BALL_ADD_TIME">100.0</string>
-
-    <!-- Maximum number of Balls allowed in play at one time -->
-    <integer name="BALL_LIMIT">50</integer>
-
     <!-- Maximum length of barrier allowed in pixels -->
     <string name="MAX_BARRIER_LENGTH">1500.0</string>
 
-    <!-- Maximum number of balls that may be lost before game ends -->
-    <integer name="MAX_LOST_BALLS">50</integer>
+    <!-- Exponent for decay of max player barrier length -->
+    <string name="BARRIER_DECAY_RATE">0.03</string>
+
+    <string name="BALL_INIT_V_MIN">3.0</string>
+    <string name="BALL_MAX_V_MIN">25.0</string>
+    <string name="BALL_V_MIN_RATE_EXP">0.003</string>
+
+    <string name="BALL_INIT_V_MAX">6.0</string>
+    <string name="BALL_MAX_V_MAX">30.0</string>
+    <string name="BALL_V_MAX_RATE_EXP">0.03</string>
 
 </resources>

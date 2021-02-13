@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Rate paired balls fade per unit simulation time -->
+    <string name="PAIRED_BALL_FADERATE"> 10.0 </string>
+
+    <string name="MAX_PAIRED_BALL_SPEED"> 60.0 </string>
+    <string name="MAX_PAIRED_BALL_ANGULAR_V"> 0.5 </string>
+
     <!-- Minimum time between frame updates in ms -->
     <string name="FRAME_INTERVAL_MS">17</string>
 

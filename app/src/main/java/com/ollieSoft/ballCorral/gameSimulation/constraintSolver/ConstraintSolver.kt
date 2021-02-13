@@ -18,8 +18,10 @@ class ConstraintSolver {
     private val constraintCache =
         HashMap<Pair<CollidableEntity, CollidableEntity>, AbstractConstraint>()
 
-    fun updateVelocities(collisionGrid: CollisionGrid, gameState: GameState, dt: Double) {
+    fun updateVelocities(gameState: GameState, dt: Double) {
 
+        clearStaleCacheEntries()
+        val collisionGrid = gameState.collisionGrid
         addRequiredConstraints(collisionGrid, gameState.gameEntityList)
 
         //Critical operation.  Anything that needs to be updated in a constraint if entity
@@ -56,7 +58,7 @@ class ConstraintSolver {
         collisionGrid: CollisionGrid, gameEntities: GameEntityList
     ) {
         gameEntities.forEach { gameEntity ->
-            if (gameEntity is BallEntity) {
+            if ((gameEntity is BallEntity) && (!gameEntity.dead)) {
                 gameEntity.getPotentialColliders(collisionGrid).forEach {
                     when (it) {
                         is BallEntity -> addConstraint(gameEntity, it)
@@ -74,6 +76,11 @@ class ConstraintSolver {
         return (
                 constraintCache.containsKey(Pair(collidableOne, collidableTwo)))
                 || (constraintCache.containsKey(Pair(collidableTwo, collidableOne)))
+    }
+
+    private fun clearStaleCacheEntries() {
+        val entriesToRemoveKeys = constraintCache.keys.filter {(it.first.dead || it.second.dead)}
+        entriesToRemoveKeys.forEach { constraintCache.remove(it) }
     }
 
     //Constraint addition overloads

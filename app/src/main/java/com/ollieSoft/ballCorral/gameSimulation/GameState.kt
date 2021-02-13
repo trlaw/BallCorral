@@ -20,6 +20,8 @@ class GameState(resObj: Resources, val gameBoundary: GameBoundary) {
 
     init {
         gameEntityList.addEntity(scoreEntity)
+        gameEntityList.addEntity(bestScoreEntity)
+        GameDifficultyMap.initializeStatics(resObj)
     }
 
     var score: Long
@@ -27,7 +29,7 @@ class GameState(resObj: Resources, val gameBoundary: GameBoundary) {
             return scoreEntity.score
         }
         set(value) {
-            scoreEntity.score = value
+            scoreEntity.score = if (value > 0) value else 0
             if (value > bestScoreEntity.bestScore) {
                 bestScoreEntity.bestScore = value
             }
